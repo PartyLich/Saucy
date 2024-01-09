@@ -27,6 +27,28 @@ namespace Saucy
 
         public bool SliceIsRightModuleEnabled { get; set; }
 
+        private int _limbDoubleDownCount = 3;
+        /// <summary>Maximum double down attempts.</summary>
+        public int LimbDoubleDownCount
+        {
+            get => _limbDoubleDownCount;
+            set
+            {
+                _limbDoubleDownCount = Math.Min(5, value);
+            }
+        }
+
+        private uint _limbMinTime = 15;
+        /// <summary>Minimum time remaining when selecting double down.</summary>
+        public uint LimbMinTime
+        {
+            get => _limbMinTime;
+            set
+            {
+                _limbMinTime = Math.Min(60, value);
+            }
+        }
+
         // the below exist just to make saving less cumbersome
 
         [NonSerialized]

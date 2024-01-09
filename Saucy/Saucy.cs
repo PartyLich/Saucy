@@ -15,6 +15,7 @@ using MgAl2O4.Utils;
 using NAudio.Wave;
 using PunishLib;
 using Saucy.CuffACur;
+using Saucy.OnALimb;
 using Saucy.OtherGames;
 using Saucy.TripleTriad;
 using System;
@@ -284,6 +285,12 @@ namespace Saucy
                 return;
             }
 
+            if (LimbModule.ModuleEnabled)
+            {
+                LimbModule.RunModule();
+                return;
+            }
+
             if (TriadAutomater.ModuleEnabled)
             {
                 if (((TriadAutomater.PlayXTimes || TriadAutomater.PlayUntilCardDrops) && TriadAutomater.NumberOfTimes == 0) || (TriadAutomater.TempCardsWonList.Count > 0 && TriadAutomater.TempCardsWonList.All(x => x.Value >= TriadAutomater.NumberOfTimes)))
@@ -348,9 +355,9 @@ namespace Saucy
             catch { }
         }
 
-        private readonly object _lockObj = new();
+        private static readonly object _lockObj = new();
 
-        private void PlaySound()
+        public static void PlaySound()
         {
             lock (_lockObj)
             {

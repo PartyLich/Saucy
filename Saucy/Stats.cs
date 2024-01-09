@@ -34,5 +34,20 @@ namespace Saucy
         public int CuffBruisings = 0;
 
         public int CuffGamesPlayed = 0;
+
+        public int LimbGamesPlayed = 0;
+
+        public int LimbGamesWon = 0;
+
+        public int LimbMGP = 0;
+
+        public uint LimbTime = 0;
+
+        public uint LimbLevel0 = 0;
+        public uint LimbLevel1 = 0;
+        public uint LimbLevel2 = 0;
+        public uint LimbLevel3 = 0;
+        public uint LimbLevel4 = 0;
+        public uint LimbLevel5 = 0;
     }
 }

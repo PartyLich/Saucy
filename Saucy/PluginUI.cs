@@ -10,6 +10,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using PunishLib.ImGuiMethods;
 using Saucy.CuffACur;
+using Saucy.OnALimb;
 using Saucy.OtherGames;
 using Saucy.TripleTriad;
 using System;
@@ -94,6 +95,12 @@ namespace Saucy
                         ImGui.EndTabItem();
                     }
 
+                    if (ImGui.BeginTabItem("Out on a Limb"))
+                    {
+                        DrawLimbTab();
+                        ImGui.EndTabItem();
+                    }
+
                     if (Saucy.openTT)
                     {
                         Saucy.openTT = false;
@@ -151,13 +158,12 @@ namespace Saucy
 
         private void DrawStatsTab()
         {
+            ImGui.SetCursorPosX(210);
+            ImGuiEx.Text(ImGuiColors.ParsedGold, "SAUCY STATS");
+            ImGui.SameLine();
+            ImGui.SetCursorPosX(8);
             if (ImGui.BeginTabBar("Stats"))
             {
-                ImGui.Columns(3, "stats", false);
-                ImGui.NextColumn();
-                ImGuiEx.CenterColumnText(ImGuiColors.ParsedGold, "SAUCY STATS", true);
-                ImGui.Columns(1);
-
                 if (ImGui.BeginTabItem("Lifetime"))
                 {
                     this.DrawStatsTab(Saucy.Config.Stats, out bool reset);
@@ -189,6 +195,12 @@ namespace Saucy
                 if (ImGui.BeginTabItem("Cuff-a-Cur"))
                 {
                     DrawCuffStats(stat);
+                    ImGui.EndTabItem();
+                }
+
+                if (ImGui.BeginTabItem("Out on a Limb"))
+                {
+                    DrawLimbStats(stat);
                     ImGui.EndTabItem();
                 }
 
@@ -241,6 +253,82 @@ namespace Saucy
             ImGui.NextColumn();
             ImGui.NextColumn();
             ImGuiEx.CenterColumnText($"{stat.CuffMGP.ToString("N0")}");
+
+            ImGui.EndChild();
+        }
+
+        private void DrawLimbStats(Stats stat)
+        {
+            double winrate = stat.LimbGamesPlayed > 0 ? (double)stat.LimbGamesWon / (double)stat.LimbGamesPlayed * 100d : 0;
+            double mgpPerMinute = stat.LimbTime > 0 ? ((double)stat.LimbMGP / (double)stat.LimbTime) * 60d : 0;
+
+            ImGui.BeginChild("Limb Stats", new Vector2(0, ImGui.GetContentRegionAvail().Y - 30f), true);
+
+            ImGui.Columns(3, null, false);
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText(ImGuiColors.DalamudRed, "Out on a Limb", true);
+            ImGuiHelpers.ScaledDummy(10f);
+            ImGui.NextColumn();
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText("Games Played", true);
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText("Games Won", true);
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText("Winrate", true);
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText($"{stat.LimbGamesPlayed:N0}");
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText($"{stat.LimbGamesWon:N0}");
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText($"{winrate:N1}%");
+            ImGui.NextColumn();
+
+            ImGui.Columns(1, null, false);
+            ImGuiHelpers.ScaledDummy(10f);
+            ImGui.NextColumn();
+
+            ImGui.Columns(3, null, false);
+            ImGuiEx.CenterColumnText("MGP Won", true);
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText("Seconds Played", true);
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText("MGP Per Min", true);
+
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText($"{stat.LimbMGP:N0}");
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText($"{stat.LimbTime:N0}");
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText($"{mgpPerMinute:N1}");
+
+            ImGui.Columns(1, null, false);
+            ImGuiHelpers.ScaledDummy(10f);
+            ImGui.NextColumn();
+
+            ImGui.Columns(6, null, false);
+            ImGuiEx.CenterColumnText("L1", true);
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText("L2", true);
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText("L3", true);
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText("L4", true);
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText("L5", true);
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText("L6", true);
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText($"{stat.LimbLevel0:N0}");
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText($"{stat.LimbLevel1:N0}");
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText($"{stat.LimbLevel2:N0}");
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText($"{stat.LimbLevel3:N0}");
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText($"{stat.LimbLevel4:N0}");
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText($"{stat.LimbLevel5:N0}");
 
             ImGui.EndChild();
         }
@@ -577,42 +665,102 @@ namespace Saucy
 
                 ImGui.Checkbox("Log out after finishing", ref TriadAutomater.LogOutAfterCompletion);
 
-                bool playSound = Saucy.Config.PlaySound;
-
-                ImGui.Columns(2, null, false);
-                if (ImGui.Checkbox("Play sound upon completion", ref playSound))
-                {
-                    Saucy.Config.PlaySound = playSound;
-                    Saucy.Config.Save();
-                }
-
-                if (playSound)
-                {
-                    ImGui.NextColumn();
-                    ImGui.Text("Select Sound");
-                    if (ImGui.BeginCombo("###SelectSound", Saucy.Config.SelectedSound))
-                    {
-                        string path = Path.Combine(Svc.PluginInterface.AssemblyLocation.Directory.FullName, "Sounds");
-                        foreach (var file in new DirectoryInfo(path).GetFiles())
-                        {
-                            if (ImGui.Selectable($"{Path.GetFileNameWithoutExtension(file.FullName)}", Saucy.Config.SelectedSound == Path.GetFileNameWithoutExtension(file.FullName)))
-                            {
-                                Saucy.Config.SelectedSound = Path.GetFileNameWithoutExtension(file.FullName);
-                                Saucy.Config.Save();
-                            }
-                        }
-
-                        ImGui.EndCombo();
-                    }
-
-                    if (ImGui.Button("Open Sound Folder"))
-                    {
-                        Process.Start("explorer.exe", @$"{Path.Combine(Svc.PluginInterface.AssemblyLocation.Directory.FullName, "Sounds")}");
-                    }
-                    ImGuiComponents.HelpMarker("Drop any MP3 files into the sound folder to add your own custom sounds.");
-                }
-                ImGui.Columns(1);
+                DrawSoundSelector();
             }
+        }
+
+        public unsafe void DrawLimbTab()
+        {
+            ImGui.TextWrapped(@"How to use: Click ""Enable Limb Module"" then walk up to an Out on a Limb machine.");
+            ImGui.Separator();
+
+            bool enabled = LimbModule.ModuleEnabled;
+            if (ImGui.Checkbox("Enable Limb Module", ref enabled))
+            {
+                LimbModule.ModuleEnabled = enabled;
+                if (LimbModule.ModuleEnabled && TriadAutomater.ModuleEnabled)
+                    TriadAutomater.ModuleEnabled = false;
+            }
+
+            ImGui.Text("Max double down attempts:");
+            ImGui.SameLine();
+            ImGui.PushItemWidth(90f);
+            int doubleDownCount = Saucy.Config.LimbDoubleDownCount;
+            if (ImGui.InputInt("###DoubleDownCount", ref doubleDownCount))
+            {
+                Saucy.Config.LimbDoubleDownCount = Math.Max(0, doubleDownCount);
+                Saucy.Config.Save();
+            }
+
+            ImGui.Text("Minimum time for double down:");
+            ImGui.SameLine();
+            ImGui.PushItemWidth(90f);
+            int minTime = (int)Saucy.Config.LimbMinTime;
+            if (ImGui.InputInt("###MinLimbTime", ref minTime))
+            {
+                Saucy.Config.LimbMinTime = (uint)Math.Max(0, minTime);
+                Saucy.Config.Save();
+            }
+
+            if (ImGui.Checkbox("Play X Amount of Times", ref LimbModule.PlayXTimes) && LimbModule.NumberOfTimes <= 0)
+            {
+                LimbModule.NumberOfTimes = 1;
+            }
+
+            if (LimbModule.PlayXTimes)
+            {
+                ImGui.PushItemWidth(150f);
+                ImGui.Text("How many times:");
+                ImGui.SameLine();
+
+                if (ImGui.InputInt("###NumberOfTimes", ref LimbModule.NumberOfTimes))
+                {
+                    LimbModule.NumberOfTimes = Math.Max(1, LimbModule.NumberOfTimes);
+                }
+
+                ImGui.Checkbox("Log out after finishing", ref TriadAutomater.LogOutAfterCompletion);
+
+                DrawSoundSelector();
+            }
+        }
+
+        private void DrawSoundSelector()
+        {
+            ImGui.Columns(2, null, false);
+
+            bool playSound = Saucy.Config.PlaySound;
+            if (ImGui.Checkbox("Play sound upon completion", ref playSound))
+            {
+                Saucy.Config.PlaySound = playSound;
+                Saucy.Config.Save();
+            }
+
+            if (Saucy.Config.PlaySound)
+            {
+                ImGui.NextColumn();
+                ImGui.Text("Select Sound");
+                if (ImGui.BeginCombo("###SelectSound", Saucy.Config.SelectedSound))
+                {
+                    string path = Path.Combine(Svc.PluginInterface.AssemblyLocation.Directory.FullName, "Sounds");
+                    foreach (var file in new DirectoryInfo(path).GetFiles())
+                    {
+                        if (ImGui.Selectable($"{Path.GetFileNameWithoutExtension(file.FullName)}", Saucy.Config.SelectedSound == Path.GetFileNameWithoutExtension(file.FullName)))
+                        {
+                            Saucy.Config.SelectedSound = Path.GetFileNameWithoutExtension(file.FullName);
+                            Saucy.Config.Save();
+                        }
+                    }
+
+                    ImGui.EndCombo();
+                }
+
+                if (ImGui.Button("Open Sound Folder"))
+                {
+                    Process.Start("explorer.exe", @$"{Path.Combine(Svc.PluginInterface.AssemblyLocation.Directory.FullName, "Sounds")}");
+                }
+                ImGuiComponents.HelpMarker("Drop any MP3 files into the sound folder to add your own custom sounds.");
+            }
+            ImGui.Columns(1);
         }
     }
 }
