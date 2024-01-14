@@ -35,6 +35,7 @@ jobs:
     - name: Build
       run: |
         ls "$env:AppData\XIVLauncher\addon\Hooks\dev\"
+        echo ${{ env.DALAMUD_HOME }}
         dotnet restore -r win PunishLib\PunishLib\PunishLib.csproj
         dotnet restore -r win ECommons\ECommons\ECommons.csproj
         dotnet restore -r win ClickLib\ClickLib\ClickLib.csproj
