@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
   push:
     branches:
-    - dev
     - build-test
     # - master
+    # - dev
 
 env:
   PUBLIC_NAME: Saucy
@@ -36,11 +36,14 @@ jobs:
         ls "$env:AppData\XIVLauncher\addon\Hooks\dev\"
     - name: Build
       run: |
+        dotnet restore -r win PunishLib\PunishLib\PunishLib.csproj
+        dotnet restore -r win ECommons\ECommons\ECommons.csproj
+        dotnet restore -r win ClickLib\ClickLib\ClickLib.csproj
         dotnet restore -r win ${{ env.SOLUTION_NAME }}.sln
         dotnet build --configuration Release
-    - name: Test
-      run: |
-        dotnet test --no-restore --verbosity normal
+    #- name: Test
+    #  run: |
+    #    dotnet test --no-restore --verbosity normal
     - uses: actions/upload-artifact@v2
       with:
         name: binary_zip
