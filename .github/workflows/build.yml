@@ -15,7 +15,7 @@ env:
   RELEASE_DIR: Saucy\bin\Release\Saucy
   PERSONAL_PLUGIN_REPO: PartyLich/MyDalamudPlugins
   DOTNET_CLI_TELEMETRY_OPTOUT: true
-  DALAMUD_HOME: $env:AppData\XIVLauncher\addon\Hooks\dev\
+  DALAMUD_HOME: $env:AppData\XIVLauncher\addon\Hooks\dev
 
 jobs:
   build:
@@ -36,9 +36,9 @@ jobs:
       run: |
         ls "$env:AppData\XIVLauncher\addon\Hooks\dev\"
         echo ${{ env.DALAMUD_HOME }}
-        dotnet restore -r win PunishLib\PunishLib\PunishLib.csproj
-        dotnet restore -r win ECommons\ECommons\ECommons.csproj
-        dotnet restore -r win ClickLib\ClickLib\ClickLib.csproj
+        # dotnet restore -r win PunishLib\PunishLib\PunishLib.csproj
+        # dotnet restore -r win ECommons\ECommons\ECommons.csproj
+        # dotnet restore -r win ClickLib\ClickLib\ClickLib.csproj
         dotnet restore -r win ${{ env.SOLUTION_NAME }}.sln
         dotnet build --configuration Release
     #- name: Test
