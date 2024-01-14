@@ -69,8 +69,8 @@ jobs:
   # see https://github.com/marketplace/actions/create-release
   create_release:
     needs:
-      - binary_build
-      - changelog
+      - build
+   #   - changelog
     runs-on: ubuntu-latest
    # strategy:
    #   matrix:
