@@ -110,7 +110,7 @@ jobs:
 
       - name: Current date
         id: date
-        run: echo "date::$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
       - uses: ncipollo/release-action@v1.13.0
         with:
