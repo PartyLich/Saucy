@@ -108,10 +108,18 @@ jobs:
         if: ${{ always() }}
         run: ls -R
 
-      - uses: ncipollo/release-action@v1
+      - name: Current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
+      - uses: ncipollo/release-action@v1.13.0
         with:
           artifacts: "binary_zip"
           body: "Plugin update"
+          commit: main
+          # a tagged semver commit would be better, of course
+          #tag: latest-${{ steps.date.outputs.date }}
+          tag: latest-${{ github.event.repository.updated_at}}
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: true
           allowUpdates: true
