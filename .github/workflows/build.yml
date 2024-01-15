@@ -116,7 +116,7 @@ jobs:
         with:
           artifacts: "binary_zip"
           body: "Plugin update"
-          commit: main
+          commit: build-test
           # a tagged semver commit would be better, of course
           #tag: latest-${{ steps.date.outputs.date }}
           tag: latest-${{ github.event.repository.updated_at}}
