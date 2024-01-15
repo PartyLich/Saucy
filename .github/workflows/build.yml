@@ -110,11 +110,11 @@ jobs:
 
       - name: Current date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+        run: echo "date::$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
       - uses: ncipollo/release-action@v1.13.0
         with:
-          artifacts: "binary_zip"
+          artifacts: "latest.zip"
           body: "Plugin update"
           commit: build-test
           # a tagged semver commit would be better, of course
