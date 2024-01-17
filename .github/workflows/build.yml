@@ -70,39 +70,15 @@ jobs:
     needs:
       - build
     runs-on: ubuntu-latest
-   # strategy:
-   #   matrix:
-   #     os:
-   #       - macOS-latest
-   #       - ubuntu-latest
-   #       - windows-latest
-   #     include:
-   #       - os: ubuntu-latest
-   #        target: x86_64-unknown-linux-gnu
-   #       - os: macOS-latest
-   #        target: x86_64-apple-darwin
-   #       - os: windows-latest
-   #         target: x86_64-pc-windows-msvc
     steps:
       - name: Download binary artifact
         id: download
         uses: actions/download-artifact@v2
         with:
           name: binary_zip
-    #      path: binary_zip
 
       - name: 'Echo download path'
         run: echo ${{steps.download.outputs.download-path}}
-
-     # - name: Compress binary artifact again
-     #   run: |
-     #     if [ "${{ matrix.os }}" = "windows-latest" ]; then
-     #       # -9 compress better, -y store symlinks, -r recurse dirs, -v verbose
-     #       zip -9yrv "bandcamp_downloader-${{ matrix.target }}.zip" "bandcamp_downloader-${{ matrix.target }}";
-     #     else
-     #       # create, gzip, verbose, file
-     #       tar -czvf "bandcamp_downloader-${{ matrix.target }}.tar.gz" "bandcamp_downloader-${{ matrix.target }}";
-     #     fi
 
       - name: Display structure of downloaded files
         if: ${{ always() }}
